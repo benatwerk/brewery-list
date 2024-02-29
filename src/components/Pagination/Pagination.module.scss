@@ -1,0 +1,36 @@
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    margin-top: 20px;
+
+    button {
+        background-color: transparent;
+        border: none;
+        color: black;
+        padding: 10px 15px;
+        margin: 0 5px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        border-radius: 3px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        &:disabled {
+            color: rgba(0, 0, 0, 0.3);
+            pointer-events: none;
+        }
+    }
+
+    .current {
+        background-color: rgba(98, 156, 208);
+        color: white;
+        &:hover {
+            background-color: rgb(65, 146, 217);
+        }
+    }
+}
