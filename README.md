@@ -41,4 +41,4 @@ Sorting and pagination were implemented client-side. While the API supports sort
 
 -   Testing, due to time constraints (2 hours).
 -   Better styling, due to time constraints.
--   "Disregard styling of the table". I couldn't look at those centered theads, so I styled is a bit.
+-   "Disregard styling of the table". I couldn't look at those centered theads, so I styled it a bit.
