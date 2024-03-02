@@ -1,9 +1,13 @@
-import React, { useState } from "react";
 import { useBreweries } from "@/BreweryContext";
 
 const Filter = () => {
-    const { breweryTypes, setFilter, resetFilter } = useBreweries();
-    const [selectedType, setSelectedType] = useState("");
+    const {
+        breweryTypes,
+        setFilter,
+        resetFilter,
+        selectedType,
+        setSelectedType,
+    } = useBreweries();
 
     const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selected = e.target.value;

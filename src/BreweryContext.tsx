@@ -14,6 +14,8 @@ interface BreweryContextType {
     currentPageBreweries: Brewery[];
     setCurrentPage: (page: number) => void;
     breweryTypes: string[];
+    selectedType: string;
+    setSelectedType: (type: string) => void;
     currentPage: number;
     totalPages: number;
     setFilter: (filter: string) => void;
@@ -24,6 +26,16 @@ interface BreweryContextType {
 
 const BreweryContext = createContext<BreweryContextType | undefined>(undefined);
 
+const getURLParam = (
+    type: string,
+    def: string | number | undefined
+): string | number | undefined => {
+    const urlString = window.location.search;
+    const params = new URLSearchParams(urlString);
+    const value = params.get(type);
+    return value !== null ? value : def;
+};
+
 export const BreweryProvider: React.FC<{ children: React.ReactNode }> = ({
     children,
 }) => {
@@ -33,9 +45,16 @@ export const BreweryProvider: React.FC<{ children: React.ReactNode }> = ({
         []
     );
     const [breweryTypes, setBreweryTypes] = useState<string[]>([]);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [selectedType, setSelectedType] = useState(
+        getURLParam("type", "all") as string
+    );
+    const [currentPage, setCurrentPage] = useState(
+        Number(getURLParam("page", 1))
+    );
     const [totalPages, setTotalPages] = useState(0);
-    const [viewType, setViewType] = useState("table");
+    const [viewType, setViewType] = useState(
+        getURLParam("view", "table") as string
+    );
 
     const fetchBreweries = async (params: FetchParams = { perPage: 50 }) => {
         const url = buildBreweryFetchUrl(params);
@@ -54,7 +73,7 @@ export const BreweryProvider: React.FC<{ children: React.ReactNode }> = ({
             const uniqueBreweryTypes = getUniqueBreweryTypes(sortedAndGrouped);
             setBreweryTypes(uniqueBreweryTypes);
             // Paginate the breweries, start at 1
-            paginate(1, sortedAndGrouped);
+            paginate(currentPage, sortedAndGrouped);
         } catch (error) {
             console.error("Failed to fetch breweries:", error);
         }
@@ -63,9 +82,34 @@ export const BreweryProvider: React.FC<{ children: React.ReactNode }> = ({
     // Fetch the breweries on init
     useEffect(() => {
         fetchBreweries({ perPage: 200 });
+        setTimeout(() => {
+            if (selectedType !== "all") {
+                setFilter(selectedType);
+            }
+        }, 1000);
         // I think react 19 fixes this common issue and using signals wouldn't be bad here either but I'm not familar enough with it to use here
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    interface SearchParams {
+        page?: number;
+        view?: string;
+        type?: string;
+    }
+
+    const setSearchParams = (params: SearchParams) => {
+        const query = new URLSearchParams(Object.entries(params));
+        return query.toString();
+    };
+
+    useEffect(() => {
+        const urlParams = setSearchParams({
+            page: currentPage,
+            view: viewType,
+        });
+        window.history.replaceState(null, "", `?${urlParams}`);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentPage, viewType]);
 
     const paginate = (page: number, breweriesData: Brewery[] = breweries) => {
         const offset = (page - 1) * PAGE_SIZE;
@@ -100,6 +144,8 @@ export const BreweryProvider: React.FC<{ children: React.ReactNode }> = ({
                 currentPageBreweries,
                 setCurrentPage: setCurrentPageAndPaginate,
                 breweryTypes,
+                selectedType,
+                setSelectedType,
                 currentPage,
                 totalPages,
                 setFilter,
