@@ -86,6 +86,13 @@ export const BreweryProvider: React.FC<{ children: React.ReactNode }> = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    useEffect(() => {
+        if (selectedType !== "all") {
+            setFilter(selectedType);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [allBreweries]);
+
     interface SearchParams {
         page?: number;
         view?: string;
@@ -101,10 +108,11 @@ export const BreweryProvider: React.FC<{ children: React.ReactNode }> = ({
         const urlParams = setSearchParams({
             page: currentPage,
             view: viewType,
+            type: selectedType,
         });
         window.history.replaceState(null, "", `?${urlParams}`);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentPage, viewType]);
+    }, [currentPage, viewType, selectedType]);
 
     const paginate = (page: number, breweriesData: Brewery[] = breweries) => {
         const offset = (page - 1) * PAGE_SIZE;
