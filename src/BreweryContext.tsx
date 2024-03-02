@@ -82,11 +82,6 @@ export const BreweryProvider: React.FC<{ children: React.ReactNode }> = ({
     // Fetch the breweries on init
     useEffect(() => {
         fetchBreweries({ perPage: 200 });
-        setTimeout(() => {
-            if (selectedType !== "all") {
-                setFilter(selectedType);
-            }
-        }, 1000);
         // I think react 19 fixes this common issue and using signals wouldn't be bad here either but I'm not familar enough with it to use here
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
